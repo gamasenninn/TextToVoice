@@ -1,11 +1,19 @@
 from moviepy.editor import AudioFileClip, ImageClip
+import sys
+import os
 
-def create_video(audio_path, image_path, duration, output_path):
+def create_video(audio_path, image_path):
     # 音声ファイルの読み込み
     audio_clip = AudioFileClip(audio_path)
 
+    # 音声ファイルの全長を取得
+    duration = audio_clip.duration
+
     # 静止画像の読み込みと音声の長さに合わせる
     image_clip = ImageClip(image_path, duration=duration)
+
+    # 出力動画ファイルのパスを生成
+    output_path = os.path.splitext(audio_path)[0] + ".mp4"
 
     # 静止画像に音声をセット
     video = image_clip.set_audio(audio_clip)
@@ -13,10 +21,13 @@ def create_video(audio_path, image_path, duration, output_path):
     # ビデオファイルを出力
     video.write_videofile(output_path, fps=24)
 
-# 使用例
-audio_path = 'vvox_makura.wav'  # 音声ファイルのパス
-image_path = 'image03.png'  # 静止画像ファイルのパス
-duration = 10  # 静止画像の表示時間（秒）
-output_path = 'vvox_makura.mp4'  # 出力する動画ファイルのパス
+if __name__ == "__main__":
+    if len(sys.argv) < 3:
+        print("Usage: python a2m.py <audio_file_path> <image_file_path>")
+        sys.exit(1)
 
-create_video(audio_path, image_path, duration, output_path)
+    audio_path = sys.argv[1]
+    image_path = sys.argv[2]
+
+    create_video(audio_path, image_path)
+
